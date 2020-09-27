@@ -1,0 +1,70 @@
+---
+title: "LimpiezaIDH"
+author: "Shayury Chavez"
+date: "26/9/2020"
+output: html_document
+---
+
+LIMPIEZA DE LA DATA
+  1.Primero traemos la data
+  
+```{r}
+
+library(rio)
+
+linkIDH= 'https://github.com/ShayuryChavezV/TrabajoG/blob/master/IDH.xlsx?raw=true'
+IDH1 = import(linkIDH)
+```
+
+  2.Seleccionamos las columnas a usar
+  
+```{r}
+IDH1= IDH1[, c(1,3,8)]
+```
+
+  3.Borramos las filas innecesarias
+  
+```{r}
+IDH=IDH1[-c(1:6,202:204),]
+```
+
+  4.Cambiamos nombres de variables
+  
+```{r}
+#Chequeamos el nombre de las variables
+names(IDH)
+
+#Renombrando
+names(IDH)[1] = "Ubigeo"
+names(IDH)[2] = "Provincia"
+names(IDH)[3] = "IDH_2017"
+names(IDH)
+```
+
+  5.Quitamos los espacios 
+  
+```{r}
+IDH$Provincia= gsub(' ','',IDH$Provincia)
+
+#esto es opcional porque a mí me sale simbolos raros cuando vuelvo importar la data limpia
+IDH$Provincia= gsub('á','a',IDH$Provincia)
+IDH$Provincia= gsub('é','e',IDH$Provincia)
+IDH$Provincia= gsub('í','i',IDH$Provincia)
+IDH$Provincia= gsub('ó','o',IDH$Provincia)
+IDH$Provincia= gsub('ú','u',IDH$Provincia)
+```
+
+```{r}
+#Encontramos un error
+IDH[108,2] 
+IDH[108,2] = gsub('Satipo2/','Satipo',IDH[108,2])
+```
+
+
+
+  6.Exportar la base
+
+```{r}
+export(IDH,"IDHlimpia.csv")
+```
+
