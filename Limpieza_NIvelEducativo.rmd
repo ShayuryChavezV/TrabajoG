@@ -70,4 +70,6 @@ NivelEducativo[162,1]="Callao"
 Exportamos
 
 ```{r}
-export(NivelEducativo,"NEducativo.csv")
+export(NivelEducativo, "NEducativo.csv")
+```
+
