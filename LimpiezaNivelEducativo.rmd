@@ -73,12 +73,12 @@ NivelEducativo[146,1]="Tahuamanu"
 NivelEducativo[147,1]="Tambopata"
 NivelEducativo[162,1]="Callao"
 #necesario eliminar el Total de EDU para el MERGE FINAL
-EDU$Total=NULL
+NivelEducativo$Total=NULL
 ```
 
 
 Exportamos
 
 ```{r}
-export(NivelEducativo, "NEducativo.csv")
+export(NivelEducativo, "NEDULIMPIA.xlsx")
 ```
