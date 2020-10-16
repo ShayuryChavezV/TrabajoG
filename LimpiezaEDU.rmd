@@ -1,0 +1,112 @@
+---
+title: "Limpieza Nivel Educativo"
+author: "Shayury Chavez"
+date: "27/9/2020"
+output: html_document
+---
+
+---
+title: "Limpieza Nivel Educativo"
+author: "Shayury Chavez"
+date: "27/9/2020"
+output: html_document
+---
+
+#Limpieza de data de Nivel Educativo
+
+Traemos la data de Github
+```{r}
+library(rio)
+linkEDU='https://github.com/ShayuryChavezV/TrabajoG/blob/master/EDUSUCIA.xlsx?raw=true'
+EDU=import(linkEDU)
+```
+
+Eliminamos las columnas y filas innecesarias
+```{r}
+EDU=EDU[-c(1:7),]
+EDU$'Área Geográfica'=NULL
+EDU=EDU[-c(197:202),]
+```
+
+Cambiamos de nombre a las columnas
+
+```{r}
+names(EDU)[1]='Provincia'
+names(EDU)[2]='SinNivel'
+names(EDU)[3]='Inicial'
+names(EDU)[4]='Primaria'
+names(EDU)[5]='Secundaria'
+names(EDU)[6]='BasicaEspecial'
+names(EDU)[7]='SuperiorNoUniversitariaIncompleta'
+names(EDU)[8]='SuperiorNoUniversitariacompleta'
+names(EDU)[9]='SuperiorUniversitariaIncompleta'
+names(EDU)[10]='SuperiorUniversitariacompleta'
+names(EDU)[11]='MaestriaDoctorado'
+names(EDU)[12]='Total'
+```
+
+Usamos el codigo str_split para dividir la columna Provincia, usando como patrón los dos puntos (:)
+```{r}
+library(stringr)
+str_split(string = EDU$Provincia,
+          pattern = ':',
+          simplify=T)
+EDU$Provincia=str_split(string = EDU$Provincia,
+          pattern = ':',
+          simplify=T)[,2]
+EDU$Provincia
+```
+
+Eliminamos los espacios hallados en los nombres de la columna Provincia
+```{r}
+gsub(' ',"",EDU$Provincia)
+EDU$Provincia = gsub('',"",EDU$Provincia)
+EDU$Provincia
+
+```
+
+Convertimos a numerico y pasamos a porcentajes
+```{r}
+#convertir a numerica
+EDU[,c(2:12)]=lapply(EDU[,c(2:12)],as.numeric)
+
+attach(EDU)
+EDU$SinNivel= (SinNivel/Total)*100
+
+EDU$Inicial= (Inicial/Total)*100
+
+EDU$Primaria= (Primaria/Total)*100
+
+EDU$Secundaria= (Secundaria/Total)*100
+
+EDU$BasicaEspecial= (BasicaEspecial/Total)*100
+
+EDU$SuperiorNoUniversitariaIncompleta= (SuperiorNoUniversitariaIncompleta/Total)*100
+
+EDU$SuperiorNoUniversitariacompleta= (SuperiorNoUniversitariacompleta/Total)*100
+
+EDU$SuperiorUniversitariaIncompleta= (SuperiorUniversitariaIncompleta/Total)*100
+
+EDU$SuperiorUniversitariacompleta= (SuperiorUniversitariacompleta/Total)*100
+
+EDU$MaestriaDoctorado= (MaestriaDoctorado/Total)*100
+```
+
+
+Añadimos nombre a las filas restantes
+```{r}
+EDU[145,1]="Manu"
+EDU[146,1]="Tahuamanu"
+EDU[147,1]="Tambopata"
+EDU[162,1]="Callao"
+#necesario eliminar el Total de EDU para el MERGE FINAL
+EDU$Total=NULL
+#A PARTIR DE VERIFICAR EL MERGE, PROBLEMITA CON BONGARA
+EDU[EDU$Provincia=="Bongara", "Provincia"]="Bongará"
+```
+
+Exportamos
+
+```{r}
+export(EDU,"EDULIMPIA.xlsx")
+```
