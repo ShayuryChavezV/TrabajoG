@@ -1,0 +1,76 @@
+---
+title: "LimpiezaIDH"
+author: "Shayury Chavez"
+date: "26/9/2020"
+output: html_document
+---
+
+LIMPIEZA DE LA DATA
+  1.Primero traemos la data
+  
+```{r}
+library(rio)
+library(readxl)
+#Importamos la data a nivel provincial
+linkIDH= 'https://github.com/ShayuryChavezV/TrabajoG/blob/master/IDHSUCIA.xlsx?raw=true'
+IDH = import(linkIDH, sheet= 'Provincial')
+
+#Importamos la data a nivel departamental porque la provincia de Callao esta ahí
+
+linkIDH= 'https://github.com/ShayuryChavezV/TrabajoG/blob/master/IDHSUCIA.xlsx?raw=true'
+IDH2 = import(linkIDH, sheet= 'Departamental')
+
+```
+
+  2.Seleccionamos las columnas a usar Y eliminamos filas innecesarias
+  
+```{r}
+#Para provincas
+IDH= IDH[, c(1,3,8)]
+#Para  departamentos 
+IDH2= IDH2[, c(1,2,8)]
+
+#creamos entonces una fila para en IDH con la provincia del Callao
+
+IDH[205,]= IDH2[14,]
+
+#Eliminamos las filas innecesarias
+IDH=IDH[-c(1:6,202:204),]
+
+```
+
+  3.Renombramos variables y algunas filas
+  
+```{r}
+#Chequeamos el nombre de las variables
+names(IDH)
+
+#Renombrando
+names(IDH)[1] = "Ubigeo"
+names(IDH)[2] = "Provincia"
+names(IDH)[3] = "IDH_2017"
+names(IDH)
+
+#Eliminamos los espacios hallados en los nombres de la columna Provincia
+IDH$Provincia= gsub(' ','',IDH$Provincia)
+
+#Renombramos para el MERGE
+IDH[IDH$Provincia=='ProvinciaConstitucionaldelCALLAO',"Provincia"]="Callao"
+IDH[IDH$Provincia=="DanielA.Carrión", "Provincia"]="DanielAlcidesCarrión"
+IDH[IDH$Provincia=="PaucardelSaraSara", "Provincia"]="PáucardelSaraSara"
+IDH[IDH$Provincia=="DosdeMayo", "Provincia"]="DosDeMayo"
+IDH[IDH$Provincia=="Huamalies", "Provincia"]="Huamalíes"
+IDH[IDH$Provincia=="Manú", "Provincia"]="Manu"
+IDH[IDH$Provincia=="Satipo2/", "Provincia"]="Satipo"
+IDH[IDH$Provincia=="Tahuamanú", "Provincia"]="Tahuamanu"
+
+#Borramos para hacer el MERGE
+IDH$Ubigeo=NULL
+```
+
+
+  4.Exportar la base
+
+```{r}
+export(IDH,"IDHLIMPIA.xlsx")
+```
