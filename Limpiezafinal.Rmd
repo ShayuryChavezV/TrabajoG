@@ -106,7 +106,7 @@ PRO[PRO$Provincia=="DatemdelMaraíñón", "Provincia"]="DatemdelMarañón"
 table(PRO$Provincia)
 ```
 
-####limpieza CEM
+###limpieza CEM
 ```{r}
 #Seleccionamos las columnas a usar
 CEM= CEM[, c(1,25,26)]
