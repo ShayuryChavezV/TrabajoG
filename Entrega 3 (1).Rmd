@@ -1,0 +1,620 @@
+#ENTREGA 3
+
+##Primero importamos nuestra base de datos final ya limpia
+```{r}
+library(rio)
+LinkF= 'https://github.com/ShayuryChavezV/TrabajoG/raw/master/DataFinalLimpia.xlsx'
+DataFinal= import(LinkF)
+```
+
+```{r}
+#colocamos las filas a la porvincias
+row.names(DataFinal)= DataFinal$Provincia
+```
+
+Ahora realizamos las tablas, medidas de tendencia central y los graficos de cada una de las variables independientes y de la variable independiente
+
+###Instalo los paquetes necesarios:
+```{r}
+#Funcion que instala paquete para obtener laS MTC
+library(DescTools)
+#Funcion que instala paquete para obtener la asimetria o curtosis
+library(moments)
+```
+
+##Variable dependiente: numero de denuncias en el CEM (X)
+```{r}
+str(DataFinal$'Número denuncias CEMS') #verificamos que no es numerica, entonces la convertimos 
+DataFinal$'Número denuncias CEMS'=as.numeric(DataFinal$'Número denuncias CEMS')
+```
+
+```{r}
+#tablas
+table(DataFinal$'Número denuncias CEMS')
+prop.table(table(DataFinal$'Número denuncias CEMS'))*100
+```
+
+###MEDIDAS DE TENDENCIA CENTRAL EN NÚMEROS
+```{r}
+Mode(DataFinal$'Número denuncias CEMS', na.rm = T)
+mean(DataFinal$'Número denuncias CEMS', na.rm = T)
+Median(DataFinal$'Número denuncias CEMS', na.rm = T)
+summary(DataFinal$'Número denuncias CEMS')
+```
+
+###GRÁFICOS DE NÚMEROS
+```{r}
+#HISTOGRAMA
+hist(DataFinal$'Número denuncias CEMS',col="RED", 
+        main="Numero de denuncias segun provincias")
+#BARPLOT
+barplot(DataFinal$'Número denuncias CEMS',col="RED", 
+        main="Numero de denuncias segun provincias")
+#BOXPLOT
+boxplot(DataFinal$'Número denuncias CEMS')
+```
+
+###Observamos que es mejor trabajar en porcentajes #OJO
+```{r}
+DataFinal$`Número denuncias CEMS`= (DataFinal$`Número denuncias CEMS`/ 95317)*100
+names(DataFinal)[2]= 'PorcentajeDenunciasCEM'
+DataFinal$'PorcentajeDenunciasCEM'= substr(DataFinal$'PorcentajeDenunciasCEM', start = 1, stop = 4)
+```
+
+```{r}
+#verificamos que no es numerica, entonces la convertimos 
+str(DataFinal$'PorcentajeDenunciasCEM') 
+DataFinal$'PorcentajeDenunciasCEM'=as.numeric(DataFinal$'PorcentajeDenunciasCEM')
+```
+###MEDIDAS DE TENDENCIA CENTRAL PORCENTAJES
+```{r}
+##Evaluamos y graficamos con esta nueva variable 
+Mode(DataFinal$'PorcentajeDenunciasCEM', na.rm = T)
+mean(DataFinal$'PorcentajeDenunciasCEM', na.rm = T)
+Median(DataFinal$'PorcentajeDenunciasCEM', na.rm = T)
+summary(DataFinal$'PorcentajeDenunciasCEM')
+```
+
+###MEDIDAS DE DISPERSIÓN PORCENTAJES
+```{r}
+# Desviación estándar
+sd(DataFinal$`PorcentajeDenunciasCEM`, na.rm= T)
+
+# Varianza
+var(DataFinal$`PorcentajeDenunciasCEM`, na.rm= T)
+
+# Rango
+rango=max(DataFinal$`PorcentajeDenunciasCEM`, na.rm = T) - min(DataFinal$`PorcentajeDenunciasCEM`, na.rm= T)
+rango
+
+#Asimetría
+skewness(DataFinal$`PorcentajeDenunciasCEM`, na.rm = T)
+
+#Curtosis
+kurtosis(DataFinal$`PorcentajeDenunciasCEM`, na.rm = T)
+
+#Cuartiles
+quantile(DataFinal$`PorcentajeDenunciasCEM`, na.rm = T)
+
+#Rango Intercuartil
+IQR = IQR(DataFinal$`PorcentajeDenunciasCEM`,na.rm = T) 
+IQR
+```
+###GRÁFICOS DE PORCENTAJES
+```{r}
+#BOXPLOT
+boxplot(DataFinal$`PorcentajeDenunciasCEM`, col="PINK", main="Boxplot de porcentaje de denuncias del CEM", xlab="Porcentaje de denuncias CEM", ylab="Cantidad de provincias")
+
+#BARPLOT
+barplot(DataFinal$`PorcentajeDenunciasCEM`,col="PINK", main="Barplot de porcentaje de denuncias del CEM", xlab="Porcentaje de denuncias CEM", ylab="Cantidad de provincias")
+
+#HISTOGRAMA
+hist(DataFinal$`PorcentajeDenunciasCEM`, col="PINK", main="Histograma de porcentaje de denuncias del CEM", xlab="Porcentaje de denuncias CEM", ylab="Cantidad de provincias")
+```
+
+##Variable independiente: Número de comisarias
+
+```{r}
+str(DataFinal$NúmerodeCOMS) 
+DataFinal$NúmerodeCOMS=as.numeric(DataFinal$NúmerodeCOMS)
+```
+
+```{r}
+#tablas
+table(DataFinal$NúmerodeCOMS)
+prop.table(table(DataFinal$NúmerodeCOMS))*100
+```
+
+###MEDIDAS DE TENDENCIA CENTRAL
+```{r}
+Mode(DataFinal$NúmerodeCOMS, na.rm = T)
+mean(DataFinal$NúmerodeCOMS, na.rm = T)
+Median(DataFinal$NúmerodeCOMS, na.rm = T)
+summary(DataFinal$NúmerodeCOMS)
+```
+
+###MEDIDAS DE DISPERSIÓN
+```{r}
+# Desviación estándar
+sd(DataFinal$NúmerodeCOMS, na.rm= T)
+
+# Varianza
+var(DataFinal$NúmerodeCOMS, na.rm= T)
+
+# Rango
+rango=max(DataFinal$NúmerodeCOMS, na.rm = T) - min(DataFinal$NúmerodeCOMS, na.rm= T)
+
+#Asimetría
+skewness(DataFinal$NúmerodeCOMS, na.rm = T)
+
+#Curtosis
+kurtosis(DataFinal$NúmerodeCOMS, na.rm = T)
+
+#Cuartiles
+quantile(DataFinal$NúmerodeCOMS, na.rm = T)
+
+#Rango Intercuartil
+IQR = IQR(DataFinal$NúmerodeCOMS,na.rm = T) 
+IQR
+```
+
+
+###GRÁFICO DE COMISARIAS
+```{r}
+#BOXPLOT
+boxplot(DataFinal$NúmerodeCOMS,col="RED", 
+        main="Numero de comisarias segun provincias")
+
+#HISTOGRAMA
+hist(DataFinal$NúmerodeCOMS,col="PINK", 
+        main="Número de comisarias según provincias")
+```
+
+###correlacion y dispersion
+```{r}
+cor.test(DataFinal$NúmerodeCOMS, DataFinal$'PorcentajeDenunciasCEM')
+plot(DataFinal$NúmerodeCOMS, DataFinal$'PorcentajeDenunciasCEM',
+     main="Relación entre % de denuncias CEM y numero de comisarias", xlab = 'Número de comisarias', ylab= 'Porcentaje de Denuncias del CEM')
+```
+
+##Variable independiente: Nivel Educativo
+###Sin nivel 
+
+```{r}
+str(DataFinal$SinNivel)
+DataFinal$SinNivel=as.numeric(DataFinal$SinNivel)
+```
+
+#####tablas
+```{r}
+prop.table(table(DataFinal$SinNivel))*100
+
+```
+
+#####medidas de tendencia central
+```{r}
+library(DescTools)
+Mode(DataFinal$SinNivel, na.rm = T)
+mean(DataFinal$SinNivel, na.rm = T)
+Median(DataFinal$SinNivel, na.rm = T)
+summary(DataFinal$SinNivel)
+```
+
+#####Grafico
+```{r}
+hist(DataFinal$SinNivel,col="GREEN", 
+        main="% de poblacion sin nivel educativo")
+boxplot(DataFinal$SinNivel)
+```
+
+
+#####correlacion y dispersion
+```{r}
+cor.test(DataFinal$SinNivel, DataFinal$'PorcentajeDenunciasCEM')
+
+sd(DataFinal$SinNivel, na.rm = T)
+var(DataFinal$SinNivel, na.rm = T)
+library(e1071)
+skewness(DataFinal$SinNivel, na.rm = T)
+kurtosis(DataFinal$SinNivel, na.rm = T)
+```
+
+
+###Inicial-primaria
+
+```{r}
+str(DataFinal$InicialPrimaria) #verificamos que no es numerica, entonces la convertimos 
+DataFinal$InicialPrimaria=as.numeric(DataFinal$InicialPrimaria)
+```
+
+```{r}
+#tablas
+prop.table(table(DataFinal$InicialPrimaria))*100
+```
+
+#####Medida de tendencia central
+```{r}
+library(DescTools)
+mode(DataFinal$InicialPrimaria, na.rm = T)
+mean(DataFinal$InicialPrimaria, na.rm = T)
+Median(DataFinal$InicialPrimaria, na.rm = T)
+summary(DataFinal$InicialPrimaria)
+```
+
+#####Gráficos
+```{r}
+#Grafico
+boxplot(DataFinal$InicialPrimaria, col="blue")
+```
+
+
+#####correlacion y dispersion
+```{r}
+cor.test(DataFinal$InicialPrimaria, DataFinal$'PorcentajeDenunciasCEM')
+
+sd(DataFinal$InicialPrimaria)
+var(DataFinal$InicialPrimaria)
+library(e1071)
+skewness(DataFinal$InicialPrimaria)
+```
+
+
+###Basica Especial
+####Tablas
+```{r}
+table(DataFinal$EBasicaEspecial)
+prop.table(table(DataFinal$EBasicaEspecial))*100
+str(DataFinal$EBasicaEspecial)
+```
+
+####medidas de tendencia central
+```{r}
+mode(DataFinal$EBasicaEspecial)
+mean(DataFinal$EBasicaEspecial)
+Median(DataFinal$EBasicaEspecial, na.rm=T)
+summary(DataFinal$EBasicaEspecial)
+```
+
+####Graficos
+```{r}
+boxplot(DataFinal$EBasicaEspecial, col="blue")
+```
+
+####correlacion y dispersion
+```{r}
+cor.test(DataFinal$EBasicaEspecial, DataFinal$'PorcentajeDenunciasCEM')
+
+sd(DataFinal$EBasicaEspecial)
+var(DataFinal$EBasicaEspecial)
+skewness(DataFinal$EBasicaEspecial)
+
+```
+
+
+###Secundaria
+####Tablas
+```{r}
+table(DataFinal$Secundaria)
+prop.table(table(DataFinal$Secundaria))*100
+```
+
+####Medidas de tendencia central
+```{r}
+library(DescTools)
+Mode(DataFinal$Secundaria)
+mean(DataFinal$Secundaria)
+Median(DataFinal$Secundaria, na.rm=T)
+summary(DataFinal$Secundaria)
+```
+
+####Grafico
+```{r}
+boxplot(DataFinal$Secundaria, col="PINK")
+```
+
+####correlacion y dispersion
+```{r}
+cor.test(DataFinal$Secundaria, DataFinal$'PorcentajeDenunciasCEM')
+
+sd(DataFinal$Secundaria)
+var(DataFinal$Secundaria)
+library(e1071)
+skewness(DataFinal$Secundaria)
+```
+
+###E.superior
+
+```{r}
+DataFinal$DataFinal$ESuperior= substr(DataFinal$ESuperior, start = 1, stop = 5)
+str(DataFinal$ESuperior)
+DataFinal$ESuperior=as.numeric(DataFinal$ESuperior)
+```
+
+####Tablas
+```{r}
+table(DataFinal$ESuperior)
+prop.table(table(DataFinal$ESuperior))*100
+```
+
+####Meidas de tendencia central
+```{r}
+Mode(DataFinal$ESuperior)
+mean(DataFinal$ESuperior)
+Median(DataFinal$ESuperior, na.rm=T)
+summary(DataFinal$ESuperior)
+```
+
+####Graficos
+```{r}
+hist(DataFinal$ESuperior,col="BLUE")
+boxplot(DataFinal$ESuperior, col="BLUE")
+```
+
+####Correlación y dispersión
+```{r}
+cor.test(DataFinal$ESuperior, DataFinal$'PorcentajeDenunciasCEM')
+
+sd(DataFinal$ESuperior)
+var(DataFinal$ESuperior)
+skewness(DataFinal$ESuperior)
+kurtosis(DataFinal$ESuperior)
+```
+
+##Variable independiente: Lengua
+
+```{r}
+#COLUMNA: CASTELLANO
+DataFinal$Castellano= substr(DataFinal$Castellano, start = 1, stop = 5)
+str(DataFinal$Castellano)
+DataFinal$Castellano=as.numeric(DataFinal$Castellano)
+```
+
+
+```{r}
+#tablas
+table(DataFinal$Castellano)
+prop.table(table(DataFinal$Castellano))*100
+table(DataFinal$OtraLengua)
+prop.table(table(DataFinal$OtraLengua))*100
+```
+
+###medidas de tendencia central
+```{r}
+library(DescTools)
+Mode(DataFinal$Castellano)
+mean(DataFinal$Castellano)
+Median(DataFinal$Castellano, na.rm=T)
+summary(DataFinal$Castellano)
+```
+###MEDIDAS DE DISPERSIÓN
+```{r}
+# Desviación estándar
+sd(DataFinal$Castellano, na.rm= T)
+
+# Varianza
+var(DataFinal$Castellano, na.rm= T)
+
+# Rango
+rango=max(DataFinal$Castellano, na.rm = T) - min(DataFinal$Castellano, na.rm= T)
+rango
+
+#Asimetría
+skewness(DataFinal$Castellano, na.rm = T)
+
+#Curtosis
+kurtosis(DataFinal$Castellano, na.rm = T)
+
+#Cuartiles
+quantile(DataFinal$Castellano, na.rm = T)
+
+#Rango Intercuartil
+IQR = IQR(DataFinal$Castellano,na.rm = T) 
+IQR
+```
+###Grafico
+```{r}
+hist(DataFinal$Castellano,col="PINK", 
+        main="Provincias donde se habla castellano")
+boxplot(DataFinal$Castellano, col="PINK")
+```
+
+###correlacion y dispersion
+```{r}
+
+cor.test(DataFinal$Castellano, DataFinal$'PorcentajeDenunciasCEM')
+
+sd(DataFinal$Castellano)
+var(DataFinal$Castellano)
+library(e1071)
+skewness(DataFinal$Castellano)
+kurtosis(DataFinal$Castellano)
+```
+###COLUMNA: OTRA LENGUA
+```{r}
+DataFinal$OtraLengua= substr(DataFinal$OtraLengua, start = 1, stop = 5)
+DataFinal$OtraLengua=as.numeric(DataFinal$OtraLengua)
+```
+###tablas
+```{r}
+table(DataFinal$OtraLengua)
+hist(DataFinal$OtraLengua, xlab= 'Porcentaje de la población que habla otra lengua que no sea Castellano', ylab = 'Cantidad de Provincias' )
+prop.table(table(DataFinal$OtraLengua))*100
+```
+
+###medidas de tendencia central
+```{r}
+library(DescTools)
+Mode(DataFinal$OtraLengua, na.rm = T)
+mean(DataFinal$OtraLengua, na.rm = T)
+median(DataFinal$OtraLengua, na.rm = T)
+summary(DataFinal$OtraLengua)
+```
+###MEDIDAS DE DISPERSIÓN
+```{r}
+# Desviación estándar
+sd(DataFinal$OtraLengua, na.rm= T)
+
+# Varianza
+var(DataFinal$OtraLengua, na.rm= T)
+
+# Rango
+rango=max(DataFinal$OtraLengua, na.rm = T) - min(DataFinal$OtraLengua, na.rm= T)
+rango
+
+#Asimetría
+skewness(DataFinal$OtraLengua, na.rm = T)
+
+#Curtosis
+kurtosis(DataFinal$OtraLengua, na.rm = T)
+
+#Cuartiles
+quantile(DataFinal$OtraLengua, na.rm = T)
+
+#Rango Intercuartil
+IQR = IQR(DataFinal$OtraLengua,na.rm = T) 
+IQR
+```
+###Grafico
+```{r}
+hist(DataFinal$OtraLengua,col="pink", 
+        main="Histograma de población de lengua no castellana", xlab= 'Porcentaje de la población en la provincia que habla otra lengua que no sea Castellano', ylab = 'Cantidad de Provincias' )
+boxplot(DataFinal$OtraLengua, col="pink", 
+        main="Boxplot de población de lengua no castellana", xlab= 'Porcentaje de la población en la provincia que habla otra lengua que no sea Castellano', ylab = 'Cantidad de Provincias')
+```
+
+###correlacion y dispersion
+```{r}
+cor.test(DataFinal$OtraLengua, DataFinal$'PorcentajeDenunciasCEM')
+plot(DataFinal$OtraLengua, DataFinal$'PorcentajeDenunciasCEM', main="Relación entre % de denuncias CEM y numero de comisarias")
+```
+
+##Variable independiente: índice de Densidad del Estado
+
+```{r}
+DataFinal$IDE_2017= substr(DataFinal$IDE_2017, start = 1, stop = 4) 
+str(DataFinal$IDE_2017)
+DataFinal$IDE_2017=as.numeric(DataFinal$IDE_2017)
+```
+
+
+```{r}
+#tablas
+table(DataFinal$IDE_2017)
+prop.table(table(DataFinal$IDE_2017))
+```
+
+
+```{r}
+#medidas de tendencia central
+library(DescTools)
+Mode(DataFinal$IDE_2017, na.rm = T)
+mean(DataFinal$IDE_2017, na.rm = T)
+Median(DataFinal$IDE_2017, na.rm = T)
+summary(DataFinal$IDE_2017)
+```
+###MEDIDAS DE DISPERSIÓN
+```{r}
+# Desviación estándar
+sd(DataFinal$IDE_2017, na.rm= T)
+
+# Varianza
+var(DataFinal$IDE_2017, na.rm= T)
+
+# Rango
+rango=max(DataFinal$IDE_2017, na.rm = T) - min(DataFinal$IDE_2017, na.rm= T)
+rango
+
+#Asimetría
+skewness(DataFinal$IDE_2017, na.rm = T)
+
+#Curtosis
+kurtosis(DataFinal$IDE_2017, na.rm = T)
+
+#Cuartiles
+quantile(DataFinal$IDE_2017, na.rm = T)
+
+#Rango Intercuartil
+IQR = IQR(DataFinal$IDE_2017,na.rm = T) 
+IQR
+```
+
+```{r}
+#Grafico
+barplot(DataFinal$IDE_2017,col="GREEN", 
+        main="Índice de densidad del estado segun provincias")
+boxplot(DataFinal$IDE_2017)
+```
+
+```{r}
+#correlacion y dispersion
+cor.test(DataFinal$IDE_2017, DataFinal$'PorcentajeDenunciasCEM')
+plot(DataFinal$'PorcentajeDenunciasCEM', DataFinal$IDE_2017, 
+     main="Relación entre el % de denuncias CEM y el IDE", 
+     xlab="índice de densidad del estado", 
+     ylab="Porcentaje de denuncias")
+
+```
+
+##Variable independiente: índice de Desarrollo Humano
+
+```{r}
+#tablas
+table(DataFinal$IDH_2017)
+prop.table(table(DataFinal$IDH_2017))*100
+```
+
+```{r}
+DataFinal$IDH_2017= substr(DataFinal$IDH_2017, start = 1, stop = 4)
+DataFinal$IDH_2017=as.numeric(DataFinal$IDH_2017)
+```
+
+
+```{r}
+#medidas de tendencia central
+library(DescTools)
+Mode(DataFinal$IDH_2017, na.rm = T) 
+mean(DataFinal$IDH_2017, na.rm = T)
+Median(DataFinal$IDH_2017, na.rm = T)
+summary(DataFinal$IDH_2017)
+```
+###MEDIDAS DE DISPERSIÓN
+```{r}
+# Desviación estándar
+sd(DataFinal$IDH_2017, na.rm= T)
+
+# Varianza
+var(DataFinal$IDH_2017, na.rm= T)
+
+# Rango
+rango=max(DataFinal$IDH_2017, na.rm = T) - min(DataFinal$IDH_2017, na.rm= T)
+rango
+
+#Asimetría
+skewness(DataFinal$IDH_2017, na.rm = T)
+
+#Curtosis
+kurtosis(DataFinal$IDH_2017, na.rm = T)
+         
+#Cuartiles
+quantile(DataFinal$IDH_2017, na.rm = T)
+
+#Rango Intercuartil
+IQR = IQR(DataFinal$IDH_2017,na.rm = T) 
+IQR
+
+#Grafico
+hist(DataFinal$IDH_2017,col="PINK", main='Histograma del Índice de Desarrollo humano', xlab = 'Indice de Desarrollo Humano', ylab = 'Cantidad de provincias')
+boxplot(DataFinal$IDH_2017, col="PINK", main='Boxplot del Índice de Desarrollo humano', xlab = 'Indice de Desarrollo Humano', ylab = 'Cantidad de provincias')
+```
+
+
+```{r}
+#correlacion y dispersion
+plot(DataFinal$IDH_2017,DataFinal$PorcentajeDenunciasCEM,
+     main="Relación entre el porcentaje de denuncias CEM y el IDH", 
+     ylab="Porcentaje de denuncias del CEM", 
+     xlab="índice de desarrollo humano")
+```
+
+
+
