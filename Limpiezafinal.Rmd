@@ -1,9 +1,9 @@
 ---
-title: "Rmd final"
-author: "Shayury Chavez"
-date: "15/10/2020"
+title: "Limpieza final"
+date: '08.11'
 output: html_document
 ---
+
 #ENTREGA 2
 
 ##LIBRERIAS A USAR
@@ -46,6 +46,7 @@ COM= import(linkCOM)
 LinkLEN ='https://github.com/DanielaAnicama/BasesDeDatosTrabajoFinal/blob/master/LenguaMaterna.xlsx?raw=true'
 LEN = import(LinkLEN)
 ```
+
 ###extrayendo data NIVEL EDUCATIVO - EDU
 ```{r}
 LinkEDU ='https://github.com/ShayuryChavezV/TrabajoG/blob/master/EDUSUCIA.xlsx?raw=true'
@@ -74,7 +75,7 @@ IDH2 = import(linkIDH, sheet= 'Departamental')
 ###limpieza PROVINCIAS REFERENCIAL
 ```{r}
 #Seleccionamos las columnas a usar
-PRO= PRO[,c(2,3)]
+PRO= PRO[,c(1,2,3)]
 
 #Eliminamos los espacios hallados en los nombres de la columna Provincia
 PRO$Provincia = gsub(' ',"",PRO$Provincia)
@@ -102,6 +103,10 @@ PRO[PRO$Provincia=="Vilcashuamán", "Provincia"]="VilcasHuamán"
 PRO[PRO$Provincia=="Caíñete", "Provincia"]="Cañete"
 PRO[PRO$Provincia=="DatemdelMaraíñón", "Provincia"]="DatemdelMarañón"
 
+#Eliminamos problema de tildes y espacios
+PRO$Departamento = gsub('Ã',"í",PRO$Departamento)
+PRO$Departamento = gsub(' ',"",PRO$Departamento)
+table(PRO$Departamento)
 #Visualimos los nombres de la provincias
 table(PRO$Provincia)
 ```
@@ -129,7 +134,7 @@ names(CEM)[2] = "Ubigeo"
 
 #Merge necesario con PRO para tener las provincias de cada CEM
 library(readr)
-CEM=merge(CEM,PRO, by.x= 'Ubigeo', by.y='Ubigeo')
+CEM=merge(PRO,CEM, by.x= 'Ubigeo', by.y='Ubigeo')
 
 #realizamos la suma/conteo de las provincias, según Ubigeo, que se repiten
 CEM$Provincia=1
@@ -139,16 +144,18 @@ myvars <- c("Ubigeo", "Provincia")
 CEM <- CEM[myvars]
 
 #cambiamos el nombre de Provincias a Número denunicas CEMs
-names(CEM)[2] = "Número denuncias CEMS"
+names(CEM)[2] = "Númerodenunciaspor1000hab"
 
 #Merge para la data CEM con PRO
-CEM=merge(CEM,PRO, by.x= 'Ubigeo', by.y='Ubigeo')
+CEM=merge(PRO,CEM, by.x= 'Ubigeo', by.y='Ubigeo')
 
 #necesario eliminar el Ubigeo de la data CEM para el MERGE FINAL
 CEM$Ubigeo=NULL
 
 #A PARTIR DE VERIFICAR EL MERGE, PROBLEMITA CON BONGARA
 CEM[CEM$Provincia=="Bongara", "Provincia"]="Bongará"
+
+
 ```
 
 ###limpieza COM
@@ -183,6 +190,7 @@ COM=merge(COM,PRO, by.x= 'Ubigeo', by.y='Ubigeo')
 
 #necesario eliminar el Ubigeo de COM para el MERGE FINAL
 COM$Ubigeo=NULL
+COM$Departamento=NULL
 
 #A PARTIR DE VERIFICAR EL MERGE, PROBLEMITA CON BONGARA
 COM[COM$Provincia=="Bongara", "Provincia"]="Bongará"
@@ -220,35 +228,35 @@ IDE[IDE$Provincia=="Huamalies", "Provincia"]="Huamalíes"
 IDE[IDE$Provincia=="DanielA.Carrión", "Provincia"]="DanielAlcidesCarrión"
 IDE[IDE$Provincia=="PaucardelSaraSara", "Provincia"]="PáucardelSaraSara"
 IDE[IDE$Provincia=="DosdeMayo", "Provincia"]="DosDeMayo"
+
+#Cortamos decimales
+IDE$IDE_2017= substr(IDE$IDE_2017, start = 1, stop = 6)
+
 ```
 
 ###limpieza EDU 
 ```{r}
 #Eliminamos las columnas y filas innecesarias
 EDU=EDU[-c(1:7),] #FILAS
-
+EDU$'Área Geográfica'=NULL
 EDU=EDU[-c(197:202),]
 
 #Cambiamos de nombre a las columnas
-names(EDU)[2]='Provincia'
-names(EDU)[3]='SinNivel'
-names(EDU)[4]='Inicial'
-names(EDU)[5]='Primaria'
-names(EDU)[6]='Secundaria'
-names(EDU)[7]='BasicaEspecial'
-names(EDU)[8]='SuperiorNoUniversitariaIncompleta'
-names(EDU)[9]='SuperiorNoUniversitariacompleta'
-names(EDU)[10]='SuperiorUniversitariaIncompleta'
-names(EDU)[11]='SuperiorUniversitariacompleta'
-names(EDU)[12]='MaestriaDoctorado'
-names(EDU)[13]='Total'
+names(EDU)[1]='Provincia'
+names(EDU)[2]='SinNivel'
+names(EDU)[3]='Inicial'
+names(EDU)[4]='Primaria'
+names(EDU)[5]='Secundaria'
+names(EDU)[6]='BasicaEspecial'
+names(EDU)[7]='SuperiorNoUniversitariaIncompleta'
+names(EDU)[8]='SuperiorNoUniversitariacompleta'
+names(EDU)[9]='SuperiorUniversitariaIncompleta'
+names(EDU)[10]='SuperiorUniversitariacompleta'
+names(EDU)[11]='MaestriaDoctorado'
+names(EDU)[12]='Total'
 
 #Usamos el codigo str_split para dividir la columna Provincia, usando como patrón los dos puntos (:)
 library(stringr)
-EDU$`Área Geográfica` =str_split(string = EDU$Provincia,
-          pattern = ':',
-          simplify=T)[,1]
-
 EDU$Provincia=str_split(string = EDU$Provincia,
           pattern = ':',
           simplify=T)[,2]
@@ -256,36 +264,67 @@ EDU$Provincia=str_split(string = EDU$Provincia,
 #Eliminamos los espacios hallados en los nombres de la columna Provincia
 gsub(' ',"",EDU$Provincia)
 EDU$Provincia = gsub(' ',"",EDU$Provincia)
-EDU$'Área Geográfica' = gsub(', provincia',"",EDU$'Área Geográfica')
 
 #convertir a numerica
-EDU[,c(3:13)]=lapply(EDU[,c(3:13)],as.numeric)
+EDU[,c(2:12)]=lapply(EDU[,c(2:12)],as.numeric)
+
+#Reformando las categorias de educación
+EDU$InicialPrimaria = EDU$Inicial + EDU$Primaria
+
+EDU$ESuperior = EDU$SuperiorNoUniversitariaIncompleta + EDU$SuperiorNoUniversitariacompleta + EDU$SuperiorUniversitariaIncompleta + 
+EDU$SuperiorUniversitariacompleta + EDU$MaestriaDoctorado 
+
 
 #convertir niveles educativos en %
 attach(EDU)
 EDU$SinNivel= (SinNivel/Total)*100
-EDU$Inicial= (Inicial/Total)*100
-EDU$Primaria= (Primaria/Total)*100
+EDU$InicialPrimaria= (InicialPrimaria/Total)*100
 EDU$Secundaria= (Secundaria/Total)*100
 EDU$BasicaEspecial= (BasicaEspecial/Total)*100
-EDU$SuperiorNoUniversitariaIncompleta= (SuperiorNoUniversitariaIncompleta/Total)*100
-EDU$SuperiorNoUniversitariacompleta= (SuperiorNoUniversitariacompleta/Total)*100
-EDU$SuperiorUniversitariaIncompleta= (SuperiorUniversitariaIncompleta/Total)*100
-EDU$SuperiorUniversitariacompleta= (SuperiorUniversitariacompleta/Total)*100
-EDU$MaestriaDoctorado= (MaestriaDoctorado/Total)*100
+EDU$ESuperior = (ESuperior/Total)*100
+
+EDU$Inicial= NULL
+EDU$Primaria = NULL
+EDU$SuperiorNoUniversitariaIncompleta = NULL
+EDU$SuperiorNoUniversitariacompleta = NULL
+EDU$SuperiorUniversitariaIncompleta = NULL
+EDU$SuperiorUniversitariacompleta = NULL
+EDU$MaestriaDoctorado= NULL
+EDU$Total= NULL
+
 
 #Añadimos nombre a las filas restantes
-EDU[145,2]="Manu"
-EDU[146,2]="Tahuamanu"
-EDU[147,2]="Tambopata"
-EDU[162,2]="Callao"
+EDU[145,1]="Manu"
+EDU[146,1]="Tahuamanu"
+EDU[147,1]="Tambopata"
+EDU[162,1]="Callao"
+
+#A PARTIR DE VERIFICAR EL MERGE, PROBLEMITA CON BONGARA
+EDU[EDU$Provincia=="Bongara", "Provincia"]="Bongará"
+
+
+#Cortamos decimales
+EDU$SinNivel= substr(EDU$SinNivel, start = 1, stop = 7)
+EDU$BasicaEspecial= substr(EDU$BasicaEspecial, start = 1, stop = 7)
+EDU$InicialPrimaria= substr(EDU$InicialPrimaria, start = 1, stop = 7)
+EDU$Secundaria= substr(EDU$Secundaria, start = 1, stop = 7)
+EDU$ESuperior= substr(EDU$ESuperior, start = 1, stop = 7)
+
+```
+
+```{r}
+#EN EL CASO DEL CEM PARA EVITAR SESGOS
+CEM$`Númerodenunciaspor1000hab` = (CEM$`Númerodenunciaspor1000hab`/Total)
+CEM$'Númerodenunciaspor1000hab' = (CEM$ 'Númerodenunciaspor1000hab' * 1000)
+
+#Cortamos digitos
+CEM$Númerodenunciaspor1000hab= substr(CEM$Númerodenunciaspor1000hab, start = 1, stop = 7)
 
 #necesario eliminar el Total de EDU para el MERGE FINAL
 EDU$Total=NULL
 
-#A PARTIR DE VERIFICAR EL MERGE, PROBLEMITA CON BONGARA
-EDU[EDU$Provincia=="Bongara", "Provincia"]="Bongará"
 ```
+
 
 ###limpieza LEN 
 
@@ -337,6 +376,10 @@ LEN[162,1]="Callao"
 #necesario eliminar el Total de LEN para el MERGE FINAL
 LEN$Total=NULL
 
+#cortamos decimales
+LEN$OtraLengua= substr(LEN$OtraLengua, start = 1, stop = 7)
+LEN$Castellano= substr(LEN$Castellano, start = 1, stop = 7)
+
 #A PARTIR DE VERIFICAR EL MERGE, PROBLEMITA CON BONGARA
 LEN[LEN$Provincia=="Bongara", "Provincia"]="Bongará"
 ```
@@ -381,6 +424,9 @@ IDH[IDH$Provincia=="Huamalies", "Provincia"]="Huamalíes"
 IDH[IDH$Provincia=="Manú", "Provincia"]="Manu"
 IDH[IDH$Provincia=="Satipo2/", "Provincia"]="Satipo"
 IDH[IDH$Provincia=="Tahuamanú", "Provincia"]="Tahuamanu"
+
+#Acortamos los decimales 
+IDH$IDH_2017= substr(IDH$IDH_2017, start = 1, stop = 6)
 ```
 
 ##EXPORTAR DATAS
